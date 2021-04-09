@@ -1,0 +1,9 @@
+.idea/
+.github/
+src/
+tests/
+
+tsconfig.tests.json
+.DS_Store
+.eslintrc
+.editorconfig

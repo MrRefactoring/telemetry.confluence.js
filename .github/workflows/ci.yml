@@ -1,0 +1,32 @@
+name: CI
+on: push
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 10.x, 12.x, 14.x ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+      - name: set output
+        id: set
+        run: |
+          echo ::set-output name=json_var::'{ "version": "1.0.0", "endpoint": "", "hash": "" }'
+      - name: Create sensitiveInformation.json
+        run: |
+          touch src/sensitiveInformation.json
+          echo $json_var >> src/sensitiveInformation.json
+        env:
+          json_var: ${{ steps.set.outputs.json_var}}
+      - name: Build
+        run: npm run build
+      - name: Tests
+        run: npm run test
+      - name: Lint
+        run: npm run lint

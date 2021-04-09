@@ -1,0 +1,6 @@
+.idea/
+node_modules/
+out/
+
+.DS_Store
+src/sensitiveInformation.json
