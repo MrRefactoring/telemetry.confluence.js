@@ -6,7 +6,7 @@ import { version, endpoint, hash } from './sensitiveInformation.json';
 interface TelemetryMetadata {
   telemetryClientVersion: string;
   telemetryClientVersionHash: string;
-  timeDifference: number;
+  timeDifference: number | null;
 }
 
 interface ServerTime {
@@ -20,8 +20,10 @@ type TelemetryBody = Partial<Telemetry> & TelemetryMetadata;
 const timeOffsetEndpoint = 'https://worldtimeapi.org/api/timezone/Etc/UTC';
 
 export class TelemetryClient {
+  private static timeDifference?: number | null;
+  private static timeDifferenceRequest?: Promise<Date | null>;
+
   private readonly config: boolean | TelemetryConfig;
-  private timeDifference?: number;
   private queue: TelemetryBody[] = [];
   private debounce?: NodeJS.Timeout;
 
@@ -33,7 +35,7 @@ export class TelemetryClient {
     try {
       const preparedTelemetry = this.prepareTelemetry(telemetry);
 
-      if (Object.keys(preparedTelemetry).length !== 0) {
+      if (Object.keys(preparedTelemetry).length === 0) {
         return;
       }
 
@@ -114,19 +116,25 @@ export class TelemetryClient {
   }
 
   private async getTimeDifference() {
-    if (this.timeDifference) {
-      return this.timeDifference;
+    if (TelemetryClient.timeDifference !== undefined) {
+      return TelemetryClient.timeDifference;
     }
 
-    const serverTime = await fetch(timeOffsetEndpoint)
-      .then((response): Promise<ServerTime> => response.json())
-      .then(({ datetime }) => new Date(datetime));
+    TelemetryClient.timeDifferenceRequest = TelemetryClient.timeDifferenceRequest
+      || fetch(timeOffsetEndpoint)
+        .then((response): Promise<ServerTime> => response.json())
+        .then(({ datetime }) => new Date(datetime))
+        .catch(() => null);
+
+    const serverTime = await TelemetryClient.timeDifferenceRequest;
 
     const now = new Date();
 
-    this.timeDifference = Math.floor((serverTime.getTime() - now.getTime()) / 1000);
+    TelemetryClient.timeDifference = serverTime
+      ? Math.floor((serverTime.getTime() - now.getTime()) / 1000)
+      : null;
 
-    return this.timeDifference;
+    return TelemetryClient.timeDifference;
   }
 
   private setDebounce() {
