@@ -1,6 +1,6 @@
 {
   "name": "telemetry.confluence.js",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Telemetry client for confluence.js",
   "repository": "https://github.com/MrRefactoring/telemetry.confluence.js",
   "author": "Vladislav Tupikin <mrrefactoring@yandex.ru>",
@@ -8,29 +8,10 @@
   "types": "out/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "prepublishOnly": "npm run build && npm run test && npm run lint",
-    "lint": "eslint src tests --ext .ts",
-    "lint:fix": "npm run lint -- --fix",
-    "test": "jest",
-    "test:coverage": "npm run test -- --coverage"
-  },
-  "jest": {
-    "preset": "ts-jest"
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.24",
-    "@types/node-fetch": "^2.5.11",
-    "@typescript-eslint/eslint-plugin": "^4.28.2",
-    "@typescript-eslint/parser": "^4.28.2",
-    "eslint": "^7.30.0",
-    "eslint-config-airbnb-typescript": "^12.3.1",
-    "eslint-import-resolver-typescript": "^2.4.0",
-    "eslint-plugin-import": "^2.23.4",
-    "jest": "^27.0.6",
-    "ts-jest": "^27.0.3",
     "typescript": "^4.3.5"
   },
-  "dependencies": {
-    "node-fetch": "^2.6.1"
-  }
+  "dependencies": {}
 }

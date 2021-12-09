@@ -14,19 +14,5 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
-      - name: set output
-        id: set
-        run: |
-          echo ::set-output name=json_var::'{ "version": "1.0.0", "endpoint": "", "hash": "" }'
-      - name: Create sensitiveInformation.json
-        run: |
-          touch src/sensitiveInformation.json
-          echo $json_var >> src/sensitiveInformation.json
-        env:
-          json_var: ${{ steps.set.outputs.json_var}}
       - name: Build
         run: npm run build
-      - name: Tests
-        run: npm run test
-      - name: Lint
-        run: npm run lint
